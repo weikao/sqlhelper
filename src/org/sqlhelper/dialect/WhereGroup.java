@@ -1,12 +1,13 @@
 package org.sqlhelper.dialect;
-
 import java.util.ArrayList;
 import java.util.Map;
 
 public class WhereGroup {
-	public String op;
-	public ArrayList<String> keys;
-	public ArrayList<Object> vals;
+	private String op;
+	private ArrayList<String> keys = new ArrayList<String>();
+	private ArrayList<Object> vals = new ArrayList<Object>();
+	private ArrayList<String> wheres = new ArrayList<String>();
+	private ArrayList<String> ops = new ArrayList<String>();
 	private String sql;
 	private Dialect dialect;
 	/*
@@ -23,34 +24,71 @@ public class WhereGroup {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		this.op = op;
+		this.op = op.toUpperCase();
 	}
 	
 	
-	public void add(String key,int val){
-		add(key,(Object)val);
+	public void add(String key,String op,int val){
+		add(key,op,(Object)val);
 	}
-	public void add(String key,long val){
-		add(key,(Object)val);
+	public void add(String key,String op,long val){
+		add(key,op,(Object)val);
 	}
-	public void add(String key,java.util.Date val){
-		add(key,(Object)val);
+	public void add(String key,String op,java.util.Date val){
+		add(key,op,(Object)val);
 	}
-	public void add(String key,boolean val){
-		add(key,(Object)((val==true)?1:0));
+	public void add(String key,String op,boolean val){
+		add(key,op,(Object)((val==true)?1:0));
 	}
-	public void add(String key,String val){
-		add(key,(Object)val);
+	public void add(String key,String op,String val){
+		add(key,op,(Object)val);
 	}
 	
-	public void add(String key,Object val){
-		keys.add(key);
-		vals.add(val);
-		where.add(dialect.where(key, this.op, "?"));
+	public void add(String key,String op){
+		Map<String, Object> where = this.dialect.where(key, op);
+		this.keys.add((String) where.get("key"));
+		this.vals.add(where.get("val"));
+		this.wheres.add((String) where.get("where"));
+	}	
+	public void add(String key,String op,Object val){
+		Map<String, Object> where = this.dialect.where(key, op,val);
+		this.keys.add((String) where.get("key"));
+		this.vals.add(where.get("val"));
+		this.wheres.add((String) where.get("where"));
+	}	
+	public void add(String key,String op,Object val1,Object val2){
+		Map<String, Object> where = this.dialect.where(key, op,val1,val2);
+		this.keys.add((String) where.get("key"));
+		this.vals.add(where.get("val"));
+		this.wheres.add((String) where.get("where"));
 	}
-	public Map get(){
-		
-		
-		return null;
+	public String getSql(){
+		String sql = "";
+		for(String where:this.wheres){
+			if(!sql.equals("")){
+				sql += " "+ this.op +" ";
+			}
+			sql += where;
+		}
+		if(!sql.equals("")){
+			sql = "("+sql+")";
+		}
+		return sql;
+	}
+	public ArrayList<String> getKeys(){
+		return this.keys;
+	}
+	public ArrayList<String> getVals(){
+		return this.keys;
+	}
+	public ArrayList<String> getWheres(){
+		return this.wheres;
+	}
+	
+	public void clear(){
+		this.keys = new ArrayList<String>();
+		this.vals = new ArrayList<Object>();
+		this.wheres = new ArrayList<String>();
+		this.ops = new ArrayList<String>();
 	}
 }

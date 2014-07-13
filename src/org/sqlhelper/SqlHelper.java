@@ -18,6 +18,27 @@ public class SqlHelper {
 	private String sql;
 
 	public SqlHelper connection() throws Exception {
+		if(this.type==null){
+			System.out.println("SqlHelper Error:The 'type' has not set.");
+			return null;
+		}
+		if(this.driver==null){
+			System.out.println("SqlHelper Error:The 'driver' has not set.");
+			return null;
+		}
+		if(this.url==null){
+			System.out.println("SqlHelper Error:The 'url' has not set.");
+			return null;
+		}
+		if(this.user==null){
+			System.out.println("SqlHelper Error:The 'user' has not set.");
+			return null;
+		}
+		if(this.password==null){
+			System.out.println("SqlHelper Error:The 'password' has not set.");
+			return null;
+		}
+		
 		Class.forName(driver).newInstance();
 		this.conn = DriverManager.getConnection(this.url, this.user,
 				this.password);
@@ -49,7 +70,10 @@ public class SqlHelper {
 	public void setType(String type) {
 		this.type = type;
 	}
-
+	public void setDriver(String driver){
+		this.driver = driver;
+	}
+	
 	public void setUrl(String url) {
 		this.url = url;
 	}
